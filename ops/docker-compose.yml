@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  hiring-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: hiring-agent
+    restart: unless-stopped
+    env_file: ../.env
+    volumes:
+      - ../data:/app/data
+      - ../logs:/app/logs
+    environment:
+      - SQLITE_DB_PATH=/app/data/hiring_agent.db
+      - LOG_LEVEL=INFO
+    networks:
+      - hiring-agent-network
+
+  # sqlite-web:
+  #   image: coleifer/sqlite-web:latest
+  #   container_name: sqlite-web
+  #   restart: unless-stopped
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - ../data:/app/data
+  #   environment:
+  #     - SQLITE_DATABASE=/app/data/hiring_agent.db
+  #   networks:
+  #     - hiring-agent-network
+
+  # watchtower:
+  #   image: containrrr/watchtower:latest
+  #   container_name: watchtower
+  #   restart: unless-stopped
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   command: --interval 300 hiring-agent
+  #   networks:
+  #     - hiring-agent-network
+
+networks:
+  hiring-agent-network:
+    driver: bridge
